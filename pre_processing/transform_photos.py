@@ -1,55 +1,70 @@
 """Transformer images."""
 import cv2
-import numpy as np
+import os
+import time
 
 from pathlib import Path
 
 
 class TransformImages():
-    """Extract images from video with 1 fps."""
+    """Extract images from video."""
 
-    def __init__(self, video_source_path: str):
-        """Extract images from video with 1 fps.
+    def __init__(self, directory: str):
+        """Extract images from video.
 
         Parameters
         ----------
-        video_source_path: str
-            path where we have the video files.
+        directory: str
+            path where are the folders with video files.
         """
-        self.video_source_path = video_source_path
+        self.directory = directory
+        # Log time
+        self.time_start = time.time()
+
+        try:
+            os.mkdir(self.directory)
+        except OSError:
+            pass
 
     def __call__(self):
-        """Extract images from video with 1 fps."""
-
-        pathlist = Path(self.video_source_path).rglob('*')
-        print(pathlist)
-        for path in pathlist:
-            # because path is object not string
-            file_name = str(path)
-            print(file_name)
-            self._extract_images(file_name)
+        """Extract images from video."""
+        for f in Path(self.directory).iterdir():
+            pathIn = str(f)
+            pathlist = Path(pathIn).glob("*.mp4")
+            for path in pathlist:
+                file_name = str(path)
+                self._extract_images(file_name)
 
     def _extract_images(self, file_name=str):
-
-        vidcap = cv2.VideoCapture(file_name)
+        # Start capturing the feed
+        cap = cv2.VideoCapture(file_name)
+        # Find the number of frames
+        video_length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) - 1
+        print("Number of frames: ", video_length)
         count = 0
-        success = True
-        while success:
-            vidcap.set(cv2.CAP_PROP_POS_MSEC, (count*1000))
-            success, image = vidcap.read()
-
-            # Stop when last frame is identified
-            image_last = cv2.imread("frame{}.png".format(count-1))
-            if np.array_equal(image, image_last):
+        print("Converting video..\n")
+        # Start converting the video
+        while cap.isOpened():
+            # Extract the frame
+            ret, frame = cap.read()
+            if not ret:
+                continue
+            # Write the results back to output location.
+            cv2.imwrite(str(file_name.replace(file_name.split("/")[7], "")) + "images/%#05d.jpg" % (count+1), frame)
+            count = count + 5
+            # If there are no more frames left
+            if (count > (video_length-1)):
+                # Log the time again
+                time_end = time.time()
+                # Release the feed
+                cap.release()
+                # Print stats
+                print("Done extracting frames.\n%d frames extracted" % count)
+                print("It took %d seconds forconversion." % (time_end-self.time_start))
                 break
-
-            cv2.imwrite("frame%d.png" % count, image)  # save frame as PNG file
-            print('{}.sec reading a new frame: {} '.format(count, success))
-            count += 1
 
 
 if __name__ == "__main__":
-
-    video_source_path = "/Users/andreiapfsousa/projects_andreiapfsousa/ComputerVisionProjects/videos_pilar/deitada"
-    t = TransformImages(video_source_path)
+    directory = "/Users/andreiapfsousa/projects_andreiapfsousa/ComputerVisionProjects/videos_pilar"
+    t = TransformImages(directory)
     t()
