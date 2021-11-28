@@ -4,6 +4,7 @@ import time
 from pathlib import Path
 import cv2
 
+
 class TransformImages():
     """Extract images from video."""
 
@@ -22,7 +23,8 @@ class TransformImages():
         try:
             os.path.isdir(self.directory)
         except OSError:
-            pass
+            print("Can't find the directory")
+            raise
 
     def __call__(self):
         """Extract images from video."""
