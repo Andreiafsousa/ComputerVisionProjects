@@ -8,7 +8,7 @@ import torchvision.transforms as transforms
 
 
 # define the train / validation dataset loader, using the SubsetRandomSampler for the split:
-data_dir = "/Users/andreiapfsousa/projects_andreiapfsousa/ComputerVisionProjects/videos_pilar/train"
+DATA_DIR = "/Users/andreiapfsousa/projects_andreiapfsousa/ComputerVisionProjects/videos_pilar/train"
 
 
 class LoadSplitData:

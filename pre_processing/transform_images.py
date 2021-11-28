@@ -1,10 +1,8 @@
 """Transformer images."""
-import cv2
 import os
 import time
-
 from pathlib import Path
-
+import cv2
 
 class TransformImages():
     """Extract images from video."""

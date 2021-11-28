@@ -2,7 +2,7 @@
 
 Computer Vision project:
 
-- On ambit of computer vision class the idea is to create a model to classify the position of my dog(Pilar) is.
+- On ambit of computer vision class the idea is to create a model to classify the position of my dog(Pilar).
 
 ## Structure
 
@@ -34,20 +34,3 @@ We will use Pilar videos on diferent positions: seat, sleep, down, XXX.
 ### transform_split_data:
 
 -
-
-
-
-
-
-
-**ATTENTION**:
-
-`DO NOT use Github UI to create tags for the development branches.
-The UI links the GIT tag with a release and releases are only done for QA and Production environments from the 'main' branch.`
-
-To create and push a tag, use the commands bellow:
-
-- Create: `git tag <version> <commit-sha>`
-- Push: `git push origin <version>`
-
----
