@@ -17,7 +17,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 
 # !pip install -q test_tube transformers pytorch-nlp pytorch-lightning==0.9.0
 
-from transform_split_data import LoadSplitData
+from Breeds_project.pre_processing.transform_split_data import LoadSplitData
 
 # sklearn related imports
 from sklearn.metrics import precision_recall_curve
