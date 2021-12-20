@@ -5,12 +5,10 @@ import torchvision
 
 from torchvision import datasets
 import torchvision.transforms as transforms
+from sklearn.model_selection import train_test_split
 
 
-# define the train / validation dataset loader, using the SubsetRandomSampler for the split:
-DATA_DIR = "/Users/andreiapfsousa/projects_andreiapfsousa/ComputerVisionProjects/videos_pilar/train"
-
-
+# define the train / validation dataset loader, using the SubsetRandomSampler for the splitt:
 class LoadSplitData:
     """split data to create the partitions to train, val and test."""
 
@@ -20,20 +18,34 @@ class LoadSplitData:
         Parameters
         ----------
         DATA_DIR: str
-            path where are the images data to train.
+            path where are the images data to train and val.
         TEST_SPLIT:
-            percentage to split the dataset.
+           Percentage to split test dataset.
         """
         data_transforms = transforms.Compose(
             [
-                transforms.Resize((50, 50)),
+                transforms.Resize((150, 150)),
+                transforms.RandomRotation(30),
                 transforms.ToTensor(),
                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+
             ]
         )
 
+        data_transforms_overfitting = transforms.Compose([
+            transforms.ColorJitter(brightness=0.3, saturation=0.8, hue=0.5),
+            transforms.Resize((150, 150)),
+            transforms.RandomHorizontalFlip(),
+            transforms.RandomVerticalFlip(),
+            transforms.RandomRotation(degrees=(-10, 10)),
+            transforms.ToTensor()
+          ])
+            #transforms.CenterCrop(5),
+            #transforms.RandomGrayscale(),
+            #transforms.RandomAutocontrast(),
+
         dataset = datasets.ImageFolder(
-            DATA_DIR, transform=data_transforms, target_transform=lambda x: x
+            DATA_DIR, transform=data_transforms_overfitting, target_transform=lambda x: x
         )
 
         test_size = int(len(dataset) * TEST_SPLIT)
@@ -54,17 +66,17 @@ class LoadSplitData:
             train_dataset, batch_size=4, shuffle=True
         )
         valloader = torch.utils.data.DataLoader(
-            val_dataset, batch_size=4, shuffle=True
+            val_dataset, batch_size=4, shuffle=False
         )
         testloader = torch.utils.data.DataLoader(
-            test_dataset, batch_size=4, shuffle=True
+            test_dataset, batch_size=4, shuffle=False
         )
 
         return trainloader, testloader, valloader
 
     def imshow(self, img):
         """To show the images."""
-        img = img / 2 + 0.5  # unnormalize
+        img = img/2 + 0.5 # unnormalize
         npimg = img.numpy()
         plt.imshow(np.transpose(npimg, (1, 2, 0)))
         plt.show()
@@ -72,22 +84,25 @@ class LoadSplitData:
 
 if __name__ == "__main__":
     DATA_DIR = "/Users/andreiapfsousa/projects_andreiapfsousa/ComputerVisionProjects/videos_pilar/train"
-    TEST_SPLIT = 0.2
+    TEST_DIR = "/Users/andreiapfsousa/projects_andreiapfsousa/ComputerVisionProjects/videos_pilar/test"
     t = LoadSplitData()
-    trainloader, testloader, valloader = t(DATA_DIR, TEST_SPLIT)
+    TEST_SPLIT=0.2
+    trainloader, testloader,  valloader = t(DATA_DIR, TEST_SPLIT)
 
-    for sample, label in testloader:
-        print("labels of testloader:", label)
-        print(sample.shape)
+    # for sample, label in testloader:
+    #     print("labels of testloader:", label)
+    #     print(sample.shape)
 
-    for sample, label in trainloader:
-        print("labels of trainloader:", label)
+    # for sample, label in trainloader:
+    #     print("labels of trainloader:", label)
+    #     print(sample.shape)
 
-    for sample, label in valloader:
-        print("labels of valloader:", label)
+    # for sample, label in valloader:
+    #     print("labels of valloader:", label)
+    #     print(sample.shape)
 
     # see the images:
-    classes = ("deitada", "sentada")
+    classes = ("comer", "deitada", "dormir", "sentada")
     # get some random training images
     dataiter = iter(trainloader)
     images, labels = dataiter.next()
