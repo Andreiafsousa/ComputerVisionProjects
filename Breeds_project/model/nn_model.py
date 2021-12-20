@@ -17,7 +17,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 
 # !pip install -q test_tube transformers pytorch-nlp pytorch-lightning==0.9.0
 
-from Breeds_project.pre_processing.transform_split_data import LoadSplitData
+from breeds_project.pre_processing.transform_split_data import LoadSplitData
 
 # sklearn related imports
 from sklearn.metrics import precision_recall_curve
@@ -76,7 +76,7 @@ class ImagePredictionLogger(Callback):
 class LitModel(pl.LightningModule):
     """Define a Convolutional Neural Network."""
 
-    def __init__(self, input_shape, num_classes, learning_rate=2e-4, weight_decay=0.005):
+    def __init__(self, input_shape, num_classes, learning_rate=2e-4, weight_decay=0.001):
 
         super().__init__()
 
@@ -181,7 +181,7 @@ class LitModel(pl.LightningModule):
 
 # init pipeline:
 DATA_DIR = "/Users/andreiapfsousa/projects_andreiapfsousa/ComputerVisionProjects/videos_pilar/train"
-num_classes = 4
+num_classes = 120
 TEST_SPLIT = 0.3
 t = LoadSplitData()
 trainloader, testloader, valloader = t(DATA_DIR, TEST_SPLIT)
@@ -195,11 +195,11 @@ val_imgs.shape, val_labels.shape
 model = LitModel([3, 150, 150], num_classes)
 
 # Initialize wandb logger
-wandb_logger = WandbLogger(project="Pilar_computer_vision")
+wandb_logger = WandbLogger(project="Breeds_computer_vision")
 
 # Initialize a trainer
 trainer = pl.Trainer(
-    max_epochs=30,
+    max_epochs=10,
     progress_bar_refresh_rate=5,
     gpus=None,
     logger=wandb_logger,
@@ -216,60 +216,60 @@ trainer.test(model, test_dataloaders=testloader)
 # Close wandb run
 wandb.finish()
 
-# save model:
-#run = wandb.init(project="Pilar_computer_vision", job_type="producer")
+# # save model:
+# #run = wandb.init(project="Pilar_computer_vision", job_type="producer")
 
-artifact = wandb.Artifact("model", type="model")
-artifact.add_dir(MODEL_CKPT_PATH)
-
-
-# Load best model:
-model_ckpts = os.listdir(MODEL_CKPT_PATH)
-losses = []
-for model_ckpt in model_ckpts:
-    loss = re.findall("\d+\.\d+", model_ckpt)
-    losses.append(float(loss[0]))
-
-best_model_index = np.argsort(losses)[0]
-best_model = model_ckpts[best_model_index]
-#find . -name '.DS_Store' -type f -delete
-print(best_model)
-
-inference_model = LitModel.load_from_checkpoint(MODEL_CKPT_PATH + best_model)
+# artifact = wandb.Artifact("model", type="model")
+# artifact.add_dir(MODEL_CKPT_PATH)
 
 
-# Precision recall curve:
+# # Load best model:
+# model_ckpts = os.listdir(MODEL_CKPT_PATH)
+# losses = []
+# for model_ckpt in model_ckpts:
+#     loss = re.findall("\d+\.\d+", model_ckpt)
+#     losses.append(float(loss[0]))
 
-def evaluate(model, loader):
-    y_true = []
-    y_pred = []
-    for imgs, labels in loader:
-        logits = inference_model(imgs)
+# best_model_index = np.argsort(losses)[0]
+# best_model = model_ckpts[best_model_index]
+# #find . -name '.DS_Store' -type f -delete
+# print(best_model)
 
-        y_true.extend(labels)
-        y_pred.extend(logits.detach().numpy())
-
-    return np.array(y_true), np.array(y_pred)
+# inference_model = LitModel.load_from_checkpoint(MODEL_CKPT_PATH + best_model)
 
 
-y_true, y_pred = evaluate(model=inference_model, loader=testloader)
+# # Precision recall curve:
 
-# generate binary correctness labels across classes
-binary_ground_truth = label_binarize(y_true, classes=[0, 1, 2, 3])
+# def evaluate(model, loader):
+#     y_true = []
+#     y_pred = []
+#     for imgs, labels in loader:
+#         logits = inference_model(imgs)
 
-# compute a PR curve with sklearn like you normally would
-precision_micro, recall_micro, _ = precision_recall_curve(
-    binary_ground_truth.ravel(), y_pred.ravel()
-)
+#         y_true.extend(labels)
+#         y_pred.extend(logits.detach().numpy())
 
-#run = wandb.init(project="Pilar_computer_vision", job_type='evaluate')
+#     return np.array(y_true), np.array(y_pred)
 
-data = [[x, y] for (x, y) in zip(recall_micro, precision_micro)]
-sample_rate = int(len(data)/100)
 
-table = wandb.Table(columns=["recall_micro", "precision_micro"], data=data[::sample_rate])
-wandb.log({"precision_recall": wandb.plot.line(table,
-                                               "recall_micro",
-                                               "precision_micro",
-                                               stroke=None,
-                                               title="Average Precision")})
+# y_true, y_pred = evaluate(model=inference_model, loader=testloader)
+
+# # generate binary correctness labels across classes
+# binary_ground_truth = label_binarize(y_true, classes=[0, 1, 2, 3])
+
+# # compute a PR curve with sklearn like you normally would
+# precision_micro, recall_micro, _ = precision_recall_curve(
+#     binary_ground_truth.ravel(), y_pred.ravel()
+# )
+
+# #run = wandb.init(project="Pilar_computer_vision", job_type='evaluate')
+
+# data = [[x, y] for (x, y) in zip(recall_micro, precision_micro)]
+# sample_rate = int(len(data)/100)
+
+# table = wandb.Table(columns=["recall_micro", "precision_micro"], data=data[::sample_rate])
+# wandb.log({"precision_recall": wandb.plot.line(table,
+#                                                "recall_micro",
+#                                                "precision_micro",
+#                                                stroke=None,
+#                                                title="Average Precision")})

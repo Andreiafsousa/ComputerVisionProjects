@@ -2,7 +2,7 @@
 
 Computer Vision project:
 
-- On ambit of computer vision class the idea is to create a model to classify the position of my dog(Pilar).
+- On ambit of computer vision class the idea is to create a model to classify the the breed of each dog.
 
 ## Structure
 
@@ -23,13 +23,8 @@ Make sure you have `poetry` installed locally and all packages installed in the 
 
 ## Input data generation
 
-For model training we will use as input multiple video files:
+For model training we will use as input multiple image files for each different 120 breeds:
 
-We will use Pilar videos on diferent positions: seat, sleep, down, XXX.
-
-### transform images:
-
-- 'transform_images.py': we will pre proccess this data and transform in fotos
 
 ### transform_split_data:
 

@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+
 import numpy as np
 import torch
 import torchvision
@@ -65,6 +65,7 @@ class LoadSplitData:
         trainloader = torch.utils.data.DataLoader(
             train_dataset, batch_size=4, shuffle=True
         )
+
         valloader = torch.utils.data.DataLoader(
             val_dataset, batch_size=4, shuffle=False
         )
@@ -74,40 +75,23 @@ class LoadSplitData:
 
         return trainloader, testloader, valloader
 
-    # def imshow(self, img):
-    #     """To show the images."""
-    #     img = img/2 + 0.5 # unnormalize
-    #     npimg = img.numpy()
-    #     plt.imshow(np.transpose(npimg, (1, 2, 0)))
-    #     plt.show()
 
 
 if __name__ == "__main__":
-    DATA_DIR = "/Users/andreiapfsousa/projects_andreiapfsousa/ComputerVisionProjects/Dogs_Breeds_project/Annotations"
+    DATA_DIR = "/Users/andreiapfsousa/projects_andreiapfsousa/ComputerVisionProjects/Breeds_project/Dog_images"
     #TEST_DIR = "/Users/andreiapfsousa/projects_andreiapfsousa/ComputerVisionProjects/videos_pilar/test"
     t = LoadSplitData()
-    TEST_SPLIT=0.2
+    TEST_SPLIT=0.3
     trainloader, testloader,  valloader = t(DATA_DIR, TEST_SPLIT)
 
-    # for sample, label in testloader:
-    #     print("labels of testloader:", label)
-    #     print(sample.shape)
+    for sample, label in testloader:
+        print("labels of testloader:", label)
+        print(sample.shape)
 
-    # for sample, label in trainloader:
-    #     print("labels of trainloader:", label)
-    #     print(sample.shape)
+    for sample, label in trainloader:
+        print("labels of trainloader:", label)
+        print(sample.shape)
 
-    # for sample, label in valloader:
-    #     print("labels of valloader:", label)
-    #     print(sample.shape)
-
-    # # see the images:
-    # classes = ("comer", "deitada", "dormir", "sentada")
-    # # get some random training images
-    # dataiter = iter(trainloader)
-    # images, labels = dataiter.next()
-
-    # # show images
-    # t.imshow(torchvision.utils.make_grid(images))
-    # # print labels
-    # print(" ".join("%5s" % classes[labels[j]] for j in range(4)))
+    for sample, label in valloader:
+        print("labels of valloader:", label)
+        print(sample.shape)
