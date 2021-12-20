@@ -133,3 +133,4 @@ dmypy.json
 #ignore folder:
 **/Annotations/*
 **/Dog_images/*
+**/videos_pilar/*
