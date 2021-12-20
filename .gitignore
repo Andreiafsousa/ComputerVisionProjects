@@ -129,3 +129,7 @@ dmypy.json
 .pyre/
 
 .DS_Store
+
+#ignore folder:
+**/Annotations/*
+**/Dog_images/*
