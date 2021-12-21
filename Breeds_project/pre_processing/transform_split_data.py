@@ -1,4 +1,4 @@
-
+import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torchvision
@@ -24,7 +24,7 @@ class LoadSplitData:
         """
         data_transforms = transforms.Compose(
             [
-                transforms.Resize((150, 150)),
+                transforms.Resize((50, 50)),
                 transforms.RandomRotation(30),
                 transforms.ToTensor(),
                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
@@ -32,9 +32,9 @@ class LoadSplitData:
             ]
         )
 
-        data_transforms_overfitting = transforms.Compose([
+        data_transforms1= transforms.Compose([
             transforms.ColorJitter(brightness=0.3, saturation=0.8, hue=0.5),
-            transforms.Resize((150, 150)),
+            transforms.Resize((50, 50)),
             transforms.RandomHorizontalFlip(),
             transforms.RandomVerticalFlip(),
             transforms.RandomRotation(degrees=(-10, 10)),
@@ -45,7 +45,7 @@ class LoadSplitData:
             #transforms.RandomAutocontrast(),
 
         dataset = datasets.ImageFolder(
-            DATA_DIR, transform=data_transforms, target_transform=lambda x: x
+            DATA_DIR, transform=data_transforms1, target_transform=lambda x: x
         )
 
         test_size = int(len(dataset) * TEST_SPLIT)
@@ -63,18 +63,25 @@ class LoadSplitData:
         )
 
         trainloader = torch.utils.data.DataLoader(
-            train_dataset, batch_size=4, shuffle=True
+            train_dataset, batch_size=10, shuffle=True
         )
 
         valloader = torch.utils.data.DataLoader(
-            val_dataset, batch_size=4, shuffle=False
+            val_dataset, batch_size=10, shuffle=False
         )
         testloader = torch.utils.data.DataLoader(
-            test_dataset, batch_size=4, shuffle=False
+            test_dataset, batch_size=10, shuffle=False
         )
 
         return trainloader, testloader, valloader
 
+
+    def imshow(self, img):
+        """To show the images."""
+        img = img/2 + 0.5 # unnormalize
+        npimg = img.numpy()
+        plt.imshow(np.transpose(npimg, (1, 2, 0)))
+        plt.show()
 
 
 if __name__ == "__main__":
@@ -95,3 +102,16 @@ if __name__ == "__main__":
     for sample, label in valloader:
         print("labels of valloader:", label)
         print(sample.shape)
+
+
+# see the images:
+    #classes = dataset.class_to_idx
+    #classes = ("comer", "deitada", "dormir", "sentada")
+    # get some random training images
+    dataiter = iter(trainloader)
+    images, labels = dataiter.next()
+
+    # show images
+    t.imshow(torchvision.utils.make_grid(images))
+    # print labels
+   # print(" ".join("%5s" % classes[labels[j]] for j in range(4)))
