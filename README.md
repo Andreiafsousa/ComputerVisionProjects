@@ -7,6 +7,8 @@ Computer Vision project:
 ## Structure
 
 The main goal of this project is to understand better and apply the tech- niques/methods and the knowledge I learned during the Computer Vision classes. My idea was to use computer vision to solve a real problem related to distin- guishing dog breeds. The objective is to classify a dog in one image as a beagle or other breed.
+
+
 So, the steps to develop this project are:
     - Collect data and create a balanced dataset;
     - Define a pre-trained model and other simple neural network model;
@@ -15,14 +17,6 @@ So, the steps to develop this project are:
     - Analyse and compare different results when I use data augmentation vs without data augmentation and pre-trained neural network vs a simple neural network (from scratch).
 To develop the code of this project, I used a tutorial from PyTorch: PyTorch and Albumentations for image classification.
 
-
-## Setup Virtual Environment
-
-Make sure you have `poetry` installed locally and all packages installed in the environment.
-
-- To install `poetry` just use the `pip3` command: `pip3 install poetry`.
-- To create the virtual environment, run: `poetry install`.
-- To learn more about [Poetry](https://python-poetry.org/docs/).
 
 ## Input data generation
 
